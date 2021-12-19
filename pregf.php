@@ -652,6 +652,4 @@ function preg_rand(string $pattern){
 	return $rand;
 }
 
-print_r(preg_range("/a:[01]/i"));
-
 ?>
