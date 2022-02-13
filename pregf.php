@@ -5,7 +5,7 @@
  * @author Avid [tg:@Av_id]
  * @version 1.0
  */
-
+namespace PregF;
 
 define("ASCII_RANGE", implode('', range("\0", "\xff")));
 define("WORD_RANGE", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
