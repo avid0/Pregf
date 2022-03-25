@@ -118,7 +118,7 @@ function preg_range_list(string $list, bool $i = false, bool $notnot = false){
     if($i)
         $list = array_unique(array_merge(str_split(strtolower($list)), str_split(strtoupper($list))));
     else
-        $list = str_split($list);
+        $list = array_unique(str_split($list));
     if($not)
         $list = xor_chars(ASCII_RANGE, $list);
     return $list;
@@ -654,5 +654,7 @@ function preg_rand(string $pattern){
     }, $pattern);
     return $rand;
 }
+
+print_r(preg_range("/[a-f]/"));
 
 ?>
