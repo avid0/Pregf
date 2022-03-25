@@ -117,6 +117,8 @@ function preg_range_list(string $list, bool $i = false, bool $notnot = false){
     }, $list);
     if($i)
         $list = array_unique(array_merge(str_split(strtolower($list)), str_split(strtoupper($list))));
+    else
+        $list = str_split($list);
     if($not)
         $list = xor_chars(ASCII_RANGE, $list);
     return $list;
