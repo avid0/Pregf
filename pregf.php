@@ -3,7 +3,7 @@
  * preg_rand and preg_range functions
  * 
  * @author Avid [tg:@Av_id]
- * @version 1.0.1
+ * @version 1.0.2
  */
 define("ASCII_RANGE", implode('', range("\0", "\xff")));
 define("WORD_RANGE", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_");
@@ -163,13 +163,13 @@ function preg_range(string $pattern){
     }else $flags = '';
     $i = strpos($flags, 'i') !== false;
     $range = array('');
-    preg_replace_callback("/\(\?i\)|(?:\\\\Q(?:\\\\[^E]|[^\\\\])*\\\\E|\[(?:\\\]|[^\]])+\]|".
+    preg_replace_callback("/\(\?i\)|\?|(?:\\\\Q(?:\\\\[^E]|[^\\\\])*\\\\E|\[(?:\\\]|[^\]])+\]|".
         "(?<x>\((?:\g<x>|\\\\\)|\[(?:\\\]|[^\]])+\]|[^\)])*\))|(?<!\\\\)(?:\|(?:.|\n)*|\+(?:.|\n)*|\*(?:.|\n)*|\^(?:.|\n)*)|".
         "(?:\\\\\\\\|\\\\[0-7]{1,3}|\\\\x[0-9a-fA-F]{1,2}|\\\\b[01]{1,8}|\\\\u[0-9a-fA-F]{1,4}|\\\\[^x0-9bnrtveu]|".
         "\\\\.|.|\s))(?:\{(?:[0-9]+|[0-9]+,[0-9]+|,[0-9]+|[0-9]+,)\}|)/", function($block)use(&$range, &$i){
         $block = $block[0];
         $p = strrpos($block, '{');
-        $braw = substr($block, 0, $p);
+        $braw = $p === false ? $block : substr($block, 0, $p);
         switch($braw){
             case '\\\\':
                 $list = array('\\');
@@ -254,6 +254,18 @@ function preg_range(string $pattern){
             break;
             case '(?i)':
                 $i = true;
+            return '';
+            case '?':
+                $arr = array();
+                foreach($range as $r){
+                    if($r === ''){
+                        $arr[] = $r;
+                        continue;
+                    }
+                    for($j = 1; isset($r[$j-1]); ++$j)
+                        $arr[] = substr($r, 0, $j);
+                }
+                $range = $arr;
             return '';
             default:
                 if($block[0] == '\\' && $block[1] == 'Q'){
@@ -429,13 +441,13 @@ function preg_rand(string $pattern){
     }else $flags = '';
     $i = strpos($flags, 'i') !== false;
     $rand = '';
-    preg_replace_callback("/\(\?i\)|(?:\\\\Q(?:\\\\[^E]|[^\\\\])*\\\\E|\[(?:\\\]|[^\]])+\]|(?<x>\((?:\g<x>|\\\\\)|".
+    preg_replace_callback("/\(\?i\)|\?|(?:\\\\Q(?:\\\\[^E]|[^\\\\])*\\\\E|\[(?:\\\]|[^\]])+\]|(?<x>\((?:\g<x>|\\\\\)|".
     "\[(?:\\\]|[^\]])+\]|[^\)])*\))|(?<!\\\\)(?:\|(?:.|\n)*|\+(?:.|\n)*|\*(?:.|\n)*|\^(?:.|\n)*)|".
     "(?:\\\\\\\\|\\\\[0-7]{1,3}|\\\\x[0-9a-fA-F]{1,2}|\\\\b[01]{1,8}|\\\\u[0-9a-fA-F]{1,4}|\\\\[^x0-9bnrtveu]|".
     "\\\\.|.|\s))(?:\{(?:[0-9]+|[0-9]+,[0-9]+|,[0-9]+|[0-9]+,)\}|)/", function($block)use(&$rand, &$i){
         $block = $block[0];
         $p = strrpos($block, '{');
-        $braw = substr($block, 0, $p);
+        $braw = $p === false ? $block : substr($block, 0, $p);
         switch($braw){
             case '\\\\':
                 $list = array('\\');
@@ -520,6 +532,10 @@ function preg_rand(string $pattern){
             break;
             case '(?i)':
                 $i = true;
+            return '';
+            case '?':
+                if($rand !== '')
+                    $rand = substr($rand, 0, rand(1, strlen($rand)));
             return '';
             default:
                 if($block[0] == '\\' && $block[1] == 'Q'){
@@ -654,7 +670,5 @@ function preg_rand(string $pattern){
     }, $pattern);
     return $rand;
 }
-
-print_r(preg_range("/[a-f]/"));
 
 ?>
