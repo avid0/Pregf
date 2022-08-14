@@ -1,5 +1,3 @@
 {
-  "require": {
-    "avid0/Pregf" => "^v1"
-  }
+  "name": "avid0/Pregf"
 }
