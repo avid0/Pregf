@@ -1,0 +1,5 @@
+{
+  "require": {
+    "avid0/Pregf" => "^v1"
+  }
+}
